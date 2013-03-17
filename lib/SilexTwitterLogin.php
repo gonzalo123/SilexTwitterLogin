@@ -19,13 +19,19 @@ class SilexTwitterLogin
     private $consumerKey;
     private $consumerSecret;
     private $prefix;
+    private $redirectOnSuccess = self::DEFAULT_REDIRECT_ON_SUCCESS;
+    private $requestTokenRoute = self::DEFAULT_REQUESTTOKEN;
+    private $callbackUrlRoute = self::DEFAULT_CALLBACKURL;
 
-    const API_URL            = 'https://api.twitter.com/{version}';
-    const API_VERSION        = '1.1';
-    const API_REQUEST_TOKEN  = "/oauth/request_token";
-    const API_ACCESS_TOKEN   = "/oauth/access_token";
-    const API_AUTHENTICATE   = "https://api.twitter.com/oauth/authorize?";
-    const DEFAULT_SESSION_ID = 'twitter';
+    const API_URL                     = 'https://api.twitter.com/{version}';
+    const API_VERSION                 = '1.1';
+    const API_REQUEST_TOKEN           = "/oauth/request_token";
+    const API_ACCESS_TOKEN            = "/oauth/access_token";
+    const API_AUTHENTICATE            = "https://api.twitter.com/oauth/authorize?";
+    const DEFAULT_SESSION_ID          = 'twitter';
+    const DEFAULT_REQUESTTOKEN        = 'requestToken';
+    const DEFAULT_CALLBACKURL         = 'callbackUrl';
+    const DEFAULT_REDIRECT_ON_SUCCESS = '/';
 
     public function __construct(Application $app)
     {
@@ -50,11 +56,11 @@ class SilexTwitterLogin
     {
         $this->setUpRedirectMiddleware();
 
-        $this->controllersFactory->get('/requestToken', function () {
+        $this->controllersFactory->get('/' . $this->requestTokenRoute, function () {
             return $this->getRequestToken();
         });
 
-        $this->controllersFactory->get('/callbackUrl', function () {
+        $this->controllersFactory->get('/' . $this->callbackUrlRoute, function () {
             return $this->getCallbackUrl();
         });
     }
@@ -65,7 +71,7 @@ class SilexTwitterLogin
             function (Request $request) {
                 $path = $request->getPathInfo();
                 if (!$this->app['session']->has($this->sessionId)) {
-                    if (!in_array($path, ["{$this->prefix}", "{$this->prefix}/requestToken", "{$this->prefix}/callbackUrl"])) {
+                    if (!in_array($path, ["{$this->prefix}", "{$this->prefix}/{$this->requestTokenRoute}", "{$this->prefix}/{$this->callbackUrlRoute}"])) {
                         return new RedirectResponse("{$this->prefix}");
                     }
                 }
@@ -123,7 +129,7 @@ class SilexTwitterLogin
             call_user_func($this->onLoggin);
         }
 
-        return $this->app->redirect('/');
+        return $this->app->redirect($this->redirectOnSuccess);
     }
 
     public function registerOnLoggin(callable $onLoggin)
@@ -174,5 +180,20 @@ class SilexTwitterLogin
     public function setSessionId($sessionId)
     {
         $this->sessionId = $sessionId;
+    }
+
+    public function setRequestTokenRoute($requestTokenRoute)
+    {
+        $this->requestTokenRoute = $requestTokenRoute;
+    }
+
+    public function setCallbackUrlRoute($callbackUrlRoute)
+    {
+        $this->callbackUrlRoute = $callbackUrlRoute;
+    }
+    
+    public function setRedirectOnSuccess($redirectOnSuccess)
+    {
+        $this->redirectOnSuccess = $redirectOnSuccess;
     }
 }
