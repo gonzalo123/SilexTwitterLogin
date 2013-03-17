@@ -1,0 +1,11 @@
+{
+    "require": {
+        "silex/silex": "1.0.*@dev",
+        "guzzle/guzzle": "v3.3.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "": "lib/"
+        }
+    }
+}
