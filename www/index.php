@@ -21,8 +21,8 @@ $twitterLoggin->mountOn('/login', function () {
     return '<a href="/login/requestToken">login</a>';
 });
 
-$app->get('/', function () {
-    return 'Hello';
+$app->get('/', function () use ($app){
+    return 'Hello ' . $app['session']->get('twitter')['screen_name'];
 });
 
 $app->run();
