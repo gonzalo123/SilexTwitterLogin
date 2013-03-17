@@ -1,7 +1,4 @@
 <?php
-
-use Symfony\Component\HttpFoundation\Request;
-
 include __DIR__ . "/../vendor/autoload.php";
 
 $app = new Silex\Application();
