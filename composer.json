@@ -1,4 +1,19 @@
 {
+    "name":"gonzalo123/SilexTwitterLogin",
+    "description":"Sign-in with Twitter in a Silex application.",
+
+    "type":"library",
+    "homepage":"https://github.com/gonzalo123/SilexTwitterLogin",
+    "license":"MIT",
+    "keywords": ["Twitter", "OAuth1", "Guzzle"],
+    "authors":[
+        {
+            "name":"Gonzalo Ayuso",
+            "email":"gonzalo123@gmail.com",
+            "homepage":"http://gonzalo123.com"
+        }
+    ],
+
     "require": {
         "silex/silex": "1.0.*@dev",
         "guzzle/guzzle": "v3.3.0"
