@@ -71,7 +71,7 @@ class SilexTwitterLogin
             function (Request $request) {
                 $path = $request->getPathInfo();
                 if (!$this->app['session']->has($this->sessionId)) {
-                    if (!in_array($path, ["{$this->prefix}", "{$this->prefix}/{$this->requestTokenRoute}", "{$this->prefix}/{$this->callbackUrlRoute}"])) {
+                    if (!in_array($path, array("{$this->prefix}", "{$this->prefix}/{$this->requestTokenRoute}", "{$this->prefix}/{$this->callbackUrlRoute}"))) {
                         return new RedirectResponse("{$this->prefix}");
                     }
                 }
@@ -82,10 +82,10 @@ class SilexTwitterLogin
     private function getRequestToken()
     {
         $client = $this->getClient();
-        $oauth  = new OauthPlugin([
+        $oauth  = new OauthPlugin(array(
             'consumer_key'    => $this->consumerKey,
             'consumer_secret' => $this->consumerSecret,
-        ]);
+        ));
 
         $client->addSubscriber($oauth);
 
@@ -95,7 +95,7 @@ class SilexTwitterLogin
         parse_str((string)$response->getBody());
 
         if ($response->getStatusCode() == 200 && $oauth_callback_confirmed == 'true') {
-            $redirectResponse = new RedirectResponse(self::API_AUTHENTICATE . http_build_query(['oauth_token' => $oauth_token]), 302);
+            $redirectResponse = new RedirectResponse(self::API_AUTHENTICATE . http_build_query(array('oauth_token' => $oauth_token)), 302);
             $redirectResponse->send();
         }
 
@@ -108,11 +108,11 @@ class SilexTwitterLogin
 
         /** @var Request $request */
         $request = $this->app['request'];
-        $oauth   = new OauthPlugin([
+        $oauth   = new OauthPlugin(array(
             'consumer_key' => $this->consumerKey,
             'token'        => $request->get('oauth_token'),
             'verifier'     => $request->get('oauth_verifier'),
-        ]);
+        ));
 
         $client->addSubscriber($oauth);
 
@@ -139,7 +139,7 @@ class SilexTwitterLogin
 
     private function getClient()
     {
-        return new Client(self::API_URL, ['version' => self::API_VERSION]);
+        return new Client(self::API_URL, array('version' => self::API_VERSION));
     }
 
     public function getOauthToken()

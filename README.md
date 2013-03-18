@@ -9,5 +9,3 @@ and change use your own $consumerKey, $consumerSecret from Twitter
 You can start the server with.
 
 php -S 0.0.0.0:8080 -t www
-
-It needs PHP5.4
