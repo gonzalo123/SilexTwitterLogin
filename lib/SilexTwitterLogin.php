@@ -69,7 +69,7 @@ class SilexTwitterLogin
     private function setUpRedirectMiddleware()
     {
         // ugly thing due to php5.3 compatibility
-        $app                = $that->app;
+        $app                = $this->app;
         $sessionId          = $this->sessionId;
         $prefix             = $this->prefix;
         $requestTokenRoute  = $this->requestTokenRoute;
