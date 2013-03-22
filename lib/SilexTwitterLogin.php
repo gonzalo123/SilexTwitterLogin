@@ -57,13 +57,67 @@ class SilexTwitterLogin
     {
         $this->setUpRedirectMiddleware();
 
-        $this->controllersFactory->get('/' . $this->requestTokenRoute, function () {
-            return $this->getRequestToken();
+        // ugly things due to php5.3 compatibility
+        $app            = $this->app;
+        $consumerKey    = $this->consumerKey;
+        $consumerSecret = $this->consumerSecret;
+        $client = $this->getClient();
+        $that = $this;
+        ////
+
+        $this->controllersFactory->get('/' . $this->requestTokenRoute, function () use ($app, $client, $consumerKey, $consumerSecret){
+
+            $oauth  = new OauthPlugin(array(
+                'consumer_key'    => $consumerKey,
+                'consumer_secret' => $consumerSecret,
+            ));
+
+            $client->addSubscriber($oauth);
+
+            $response = $client->post(self::API_REQUEST_TOKEN)->send();
+
+            $oauth_token = $oauth_token_secret = $oauth_callback_confirmed = null;
+            parse_str((string)$response->getBody());
+
+            if ($response->getStatusCode() == 200 && $oauth_callback_confirmed == 'true') {
+                $redirectResponse = new RedirectResponse(self::API_AUTHENTICATE . http_build_query(array('oauth_token' => $oauth_token)), 302);
+                $redirectResponse->send();
+            }
+
+            return $app->redirect('/');
         });
 
-        $this->controllersFactory->get('/' . $this->callbackUrlRoute, function () {
-            return $this->getCallbackUrl();
+        $this->controllersFactory->get('/' . $this->callbackUrlRoute, function () use ($app, $client, $that, $consumerKey){
+
+            /** @var Request $request */
+            $request = $app['request'];
+            $oauth   = new OauthPlugin(array(
+                'consumer_key' => $consumerKey,
+                'token'        => $request->get('oauth_token'),
+                'verifier'     => $request->get('oauth_verifier'),
+            ));
+
+            $client->addSubscriber($oauth);
+
+            $response    = $client->post(self::API_ACCESS_TOKEN)->send();
+            $oauth_token = $oauth_token_secret = $user_id = $screen_name = null;
+
+            parse_str((string)$response->getBody());
+            $that->setUserId($user_id);
+            $that->setScreenName($screen_name);
+            $that->setOauthToken($oauth_token);
+            $that->setOauthTokenSecret($oauth_token_secret);
+            $that->triggerOnLoggin();
+
+            return $app->redirect($this->redirectOnSuccess);
         });
+    }
+
+    private function triggerOnLoggin()
+    {
+        if (is_callable($this->onLoggin)) {
+            call_user_func($this->onLoggin);
+        }
     }
 
     private function setUpRedirectMiddleware()
@@ -91,59 +145,6 @@ class SilexTwitterLogin
                 }
             }
         });
-    }
-
-    private function getRequestToken()
-    {
-        $client = $this->getClient();
-        $oauth  = new OauthPlugin(array(
-            'consumer_key'    => $this->consumerKey,
-            'consumer_secret' => $this->consumerSecret,
-        ));
-
-        $client->addSubscriber($oauth);
-
-        $response = $client->post(self::API_REQUEST_TOKEN)->send();
-
-        $oauth_token = $oauth_token_secret = $oauth_callback_confirmed = null;
-        parse_str((string)$response->getBody());
-
-        if ($response->getStatusCode() == 200 && $oauth_callback_confirmed == 'true') {
-            $redirectResponse = new RedirectResponse(self::API_AUTHENTICATE . http_build_query(array('oauth_token' => $oauth_token)), 302);
-            $redirectResponse->send();
-        }
-
-        return $this->app->redirect('/');
-    }
-
-    private function getCallbackUrl()
-    {
-        $client = $this->getClient();
-
-        /** @var Request $request */
-        $request = $this->app['request'];
-        $oauth   = new OauthPlugin(array(
-            'consumer_key' => $this->consumerKey,
-            'token'        => $request->get('oauth_token'),
-            'verifier'     => $request->get('oauth_verifier'),
-        ));
-
-        $client->addSubscriber($oauth);
-
-        $response    = $client->post(self::API_ACCESS_TOKEN)->send();
-        $oauth_token = $oauth_token_secret = $user_id = $screen_name = null;
-
-        parse_str((string)$response->getBody());
-        $this->userId           = $user_id;
-        $this->screenName       = $screen_name;
-        $this->oauthToken       = $oauth_token;
-        $this->oauthTokenSecret = $oauth_token_secret;
-
-        if (is_callable($this->onLoggin)) {
-            call_user_func($this->onLoggin);
-        }
-
-        return $this->app->redirect($this->redirectOnSuccess);
     }
 
     public function registerOnLoggin($onLoggin)
@@ -214,5 +215,25 @@ class SilexTwitterLogin
     public function setRoutesWithoutLogin(array $routesWithoutLogin)
     {
         $this->routesWithoutLogin = $routesWithoutLogin;
+    }
+
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+    }
+
+    public function setScreenName($screenName)
+    {
+        $this->screenName = $screenName;
+    }
+
+    public function setOauthToken($oauthToken)
+    {
+        $this->oauthToken = $oauthToken;
+    }
+
+    public function setOauthTokenSecret($oauthTokenSecret)
+    {
+        $this->oauthTokenSecret = $oauthTokenSecret;
     }
 }
