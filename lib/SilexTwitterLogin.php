@@ -41,7 +41,7 @@ class SilexTwitterLogin
         $this->defineApp();
     }
 
-    public function mountOn($prefix, callable $loginCallaback)
+    public function mountOn($prefix, $loginCallaback)
     {
         $this->app->get($prefix, $loginCallaback);
         $this->prefix = $prefix;
@@ -137,7 +137,7 @@ class SilexTwitterLogin
         return $this->app->redirect($this->redirectOnSuccess);
     }
 
-    public function registerOnLoggin(callable $onLoggin)
+    public function registerOnLoggin($onLoggin)
     {
         $this->onLoggin = $onLoggin;
     }
