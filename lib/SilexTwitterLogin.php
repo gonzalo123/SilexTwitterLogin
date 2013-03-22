@@ -38,13 +38,13 @@ class SilexTwitterLogin
     {
         $this->app                = $app;
         $this->controllersFactory = $app['controllers_factory'];
-        $this->defineApp();
     }
 
     public function mountOn($prefix, $loginCallaback)
     {
-        $this->app->get($prefix, $loginCallaback);
         $this->prefix = $prefix;
+        $this->app->get($prefix, $loginCallaback);
+        $this->defineApp();
         $this->app->mount($prefix, $this->getControllersFactory());
     }
 
@@ -68,7 +68,7 @@ class SilexTwitterLogin
 
     private function setUpRedirectMiddleware()
     {
-        // ugly thing due to php5.3 compatibility
+        // ugly things due to php5.3 compatibility
         $app                = $this->app;
         $sessionId          = $this->sessionId;
         $prefix             = $this->prefix;
@@ -76,21 +76,21 @@ class SilexTwitterLogin
         $callbackUrlRoute   = $this->callbackUrlRoute;
         $routesWithoutLogin = $this->routesWithoutLogin;
         ////
+        
+        $this->app->before(function (Request $request) use ($app, $sessionId, $prefix, $requestTokenRoute, $callbackUrlRoute, $routesWithoutLogin) {
+            $path = $request->getPathInfo();
+            if (!$app['session']->has($sessionId)) {
+                $withoutLogin = array($prefix, "{$prefix}/{$requestTokenRoute}", "{$prefix}/{$callbackUrlRoute}");
+                foreach ($routesWithoutLogin as $route) {
+                    $withoutLogin[] = $route;
+                }
 
-        $this->app->before(
-            function (Request $request) use ($app, $sessionId, $prefix, $requestTokenRoute, $callbackUrlRoute, $routesWithoutLogin){
-                $path = $request->getPathInfo();
-                if (!$app['session']->has($sessionId)) {
-                    $withoutLogin = array("{$prefix}/", "{$prefix}/{$requestTokenRoute}", "{$prefix}/{$callbackUrlRoute}");
-                    foreach ($routesWithoutLogin as $route) {
-                        $withoutLogin[] = $route;
-                    }
-                    if (!in_array($path, $withoutLogin)) {
-                        return new RedirectResponse($prefix);
-                    }
+                if (!in_array($path, $withoutLogin)) {
+
+                    return new RedirectResponse($prefix);
                 }
             }
-        );
+        });
     }
 
     private function getRequestToken()
