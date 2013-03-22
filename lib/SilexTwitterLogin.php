@@ -69,10 +69,11 @@ class SilexTwitterLogin
     private function setUpRedirectMiddleware()
     {
         $that = $this; // uggly thing due to php5.3 compatibility
+        $app  = $that->app; // uggly thing due to php5.3 compatibility
         $this->app->before(
-            function (Request $request) use ($that){
+            function (Request $request) use ($that, $app){
                 $path = $request->getPathInfo();
-                if (!$that->app['session']->has($that->sessionId)) {
+                if (!$app['session']->has($that->sessionId)) {
                     $withoutLogin = array($that->prefix, "{$that->prefix}/{$that->requestTokenRoute}", "{$that->prefix}/{$that->callbackUrlRoute}");
                     foreach ($that->routesWithoutLogin as $route) {
                         $withoutLogin[] = $route;
