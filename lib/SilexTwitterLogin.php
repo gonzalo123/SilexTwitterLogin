@@ -116,7 +116,7 @@ class SilexTwitterLogin
         });
     }
 
-    private function triggerOnLoggin()
+    public function triggerOnLoggin()
     {
         if (is_callable($this->onLoggin)) {
             call_user_func($this->onLoggin);
