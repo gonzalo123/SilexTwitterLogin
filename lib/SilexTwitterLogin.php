@@ -22,6 +22,7 @@ class SilexTwitterLogin
     private $redirectOnSuccess = self::DEFAULT_REDIRECT_ON_SUCCESS;
     private $requestTokenRoute = self::DEFAULT_REQUESTTOKEN;
     private $callbackUrlRoute = self::DEFAULT_CALLBACKURL;
+    private $routesWithoutLogin;
 
     const API_URL                     = 'https://api.twitter.com/{version}';
     const API_VERSION                 = '1.1';
@@ -71,7 +72,11 @@ class SilexTwitterLogin
             function (Request $request) {
                 $path = $request->getPathInfo();
                 if (!$this->app['session']->has($this->sessionId)) {
-                    if (!in_array($path, array("{$this->prefix}", "{$this->prefix}/{$this->requestTokenRoute}", "{$this->prefix}/{$this->callbackUrlRoute}"))) {
+                    $withoutLogin = array($this->prefix, "{$this->prefix}/{$this->requestTokenRoute}", "{$this->prefix}/{$this->callbackUrlRoute}");
+                    foreach ($this->routesWithoutLogin as $route) {
+                        $withoutLogin[] = $route;
+                    }
+                    if (!in_array($path, $withoutLogin)) {
                         return new RedirectResponse("{$this->prefix}");
                     }
                 }
@@ -195,5 +200,10 @@ class SilexTwitterLogin
     public function setRedirectOnSuccess($redirectOnSuccess)
     {
         $this->redirectOnSuccess = $redirectOnSuccess;
+    }
+
+    public function setRoutesWithoutLogin(array $routesWithoutLogin)
+    {
+        $this->routesWithoutLogin = $routesWithoutLogin;
     }
 }
