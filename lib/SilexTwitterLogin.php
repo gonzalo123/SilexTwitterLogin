@@ -81,7 +81,7 @@ class SilexTwitterLogin
             function (Request $request) use ($app, $sessionId, $prefix, $requestTokenRoute, $callbackUrlRoute, $routesWithoutLogin){
                 $path = $request->getPathInfo();
                 if (!$app['session']->has($sessionId)) {
-                    $withoutLogin = array($prefix, "{$prefix}/{$requestTokenRoute}", "{$prefix}/{$callbackUrlRoute}");
+                    $withoutLogin = array("{$prefix}/", "{$prefix}/{$requestTokenRoute}", "{$prefix}/{$callbackUrlRoute}");
                     foreach ($routesWithoutLogin as $route) {
                         $withoutLogin[] = $route;
                     }
