@@ -58,14 +58,15 @@ class SilexTwitterLogin
         $this->setUpRedirectMiddleware();
 
         // ugly things due to php5.3 compatibility
-        $app             = $this->app;
-        $consumerKey     = $this->consumerKey;
-        $consumerSecret  = $this->consumerSecret;
-        $apiRequestToken = self::API_REQUEST_TOKEN;
-        $apiAuthenticate = self::API_AUTHENTICATE;
-        $apiAccessToken  = self::API_ACCESS_TOKEN;
-        $that            = $this;
-        $client          = $this->getClient();
+        $app               = $this->app;
+        $consumerKey       = $this->consumerKey;
+        $consumerSecret    = $this->consumerSecret;
+        $redirectOnSuccess = $this->redirectOnSuccess;
+        $apiRequestToken   = self::API_REQUEST_TOKEN;
+        $apiAuthenticate   = self::API_AUTHENTICATE;
+        $apiAccessToken    = self::API_ACCESS_TOKEN;
+        $that              = $this;
+        $client            = $this->getClient();
         ////
 
         $this->controllersFactory->get('/' . $this->requestTokenRoute, function () use ($app, $client, $consumerKey, $consumerSecret, $apiRequestToken, $apiAuthenticate){
@@ -90,7 +91,7 @@ class SilexTwitterLogin
             return $app->redirect('/');
         });
 
-        $this->controllersFactory->get('/' . $this->callbackUrlRoute, function () use ($app, $client, $that, $consumerKey, $apiAccessToken){
+        $this->controllersFactory->get('/' . $this->callbackUrlRoute, function () use ($app, $client, $that, $consumerKey, $apiAccessToken, $redirectOnSuccess){
 
             /** @var Request $request */
             $request = $app['request'];
@@ -112,7 +113,7 @@ class SilexTwitterLogin
             $that->setOauthTokenSecret($oauth_token_secret);
             $that->triggerOnLoggin();
 
-            return $app->redirect($this->redirectOnSuccess);
+            return $app->redirect($redirectOnSuccess);
         });
     }
 
