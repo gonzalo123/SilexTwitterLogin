@@ -67,9 +67,11 @@ class SilexTwitterLogin
         $apiAccessToken    = self::API_ACCESS_TOKEN;
         $that              = $this;
         $client            = $this->getClient();
+        $prefix            = $this->prefix;
+
         ////
 
-        $this->controllersFactory->get('/' . $this->requestTokenRoute, function () use ($app, $client, $consumerKey, $consumerSecret, $apiRequestToken, $apiAuthenticate){
+        $this->controllersFactory->get('/' . $this->requestTokenRoute, function () use ($app, $client, $consumerKey, $consumerSecret, $apiRequestToken, $apiAuthenticate, $prefix){
 
             $oauth  = new OauthPlugin(array(
                 'consumer_key'    => $consumerKey,
