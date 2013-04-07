@@ -100,8 +100,8 @@ class SilexTwitterLogin
             $request = $app['request'];
             $oauth   = new OauthPlugin(array(
                 'consumer_key' => $consumerKey,
-                'oauth_token'        => $request->get('oauth_token'),
-                'oauth_verifier'     => $request->get('oauth_verifier'),
+                'token'        => $request->get('oauth_token'),
+                'verifier'     => $request->get('oauth_verifier'),
             ));
 
             $client->addSubscriber($oauth);
