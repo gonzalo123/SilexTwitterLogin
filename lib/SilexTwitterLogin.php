@@ -94,14 +94,14 @@ class SilexTwitterLogin
             return $app->redirect('/');
         });
 
-        $this->controllersFactory->get('/' . $this->callbackUrlRoute, function () use ($app, $client, $that, $consumerKey, $apiAccessToken, $redirectOnSuccess){
+        $this->controllersFactory->get('/' . $this->callbackUrlRoute, function () use ($app, $client, $that, $consumerKey, $apiAccessToken, $redirectOnSuccess, $consumerSecret){
 
             /** @var Request $request */
             $request = $app['request'];
             $oauth   = new OauthPlugin(array(
-                'consumer_key' => $consumerKey,
-                'token'        => $request->get('oauth_token'),
-                'verifier'     => $request->get('oauth_verifier'),
+                'consumer_key'       => $consumerKey,
+                'oauth_token'        => $request->get('oauth_token'),
+                'oauth_verifier'     => $request->get('oauth_verifier'),
             ));
 
             $client->addSubscriber($oauth);
