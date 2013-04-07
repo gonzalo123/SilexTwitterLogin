@@ -74,6 +74,7 @@ class SilexTwitterLogin
             $oauth  = new OauthPlugin(array(
                 'consumer_key'    => $consumerKey,
                 'consumer_secret' => $consumerSecret,
+                'oauth_callback'  => "{$this->prefix}/{$this->callbackUrlRoute}"
             ));
 
             $client->addSubscriber($oauth);
