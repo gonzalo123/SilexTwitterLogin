@@ -25,7 +25,7 @@ class SilexTwitterLogin
     private $routesWithoutLogin;
 
     const API_URL                     = 'https://api.twitter.com/{version}';
-    const API_VERSION                 = '1.1';
+    const API_VERSION                 = '1.0';
     const API_REQUEST_TOKEN           = "/oauth/request_token";
     const API_ACCESS_TOKEN            = "/oauth/access_token";
     const API_AUTHENTICATE            = "https://api.twitter.com/oauth/authorize?";
@@ -67,7 +67,7 @@ class SilexTwitterLogin
         $apiAccessToken    = self::API_ACCESS_TOKEN;
         $that              = $this;
         $client            = $this->getClient();
-        $callback          = "{$this->prefix}/{$this->callbackUrlRoute}";
+        $callback          = "http://127.0.0.1:8888/{$this->prefix}/{$this->callbackUrlRoute}";
 
         ////
 
@@ -76,7 +76,7 @@ class SilexTwitterLogin
             $oauth  = new OauthPlugin(array(
                 'consumer_key'    => $consumerKey,
                 'consumer_secret' => $consumerSecret,
-                'oauth_callback'  => $callback
+                'oauth_callback'  => urlencode($callback)
             ));
 
             $client->addSubscriber($oauth);
@@ -88,7 +88,7 @@ class SilexTwitterLogin
 
             if ($response->getStatusCode() == 200 && $oauth_callback_confirmed == 'true') {
                 $redirectResponse = new RedirectResponse($apiAuthenticate. http_build_query(array('oauth_token' => $oauth_token)), 302);
-                $redirectResponse->send();
+                return $redirectResponse->send();
             }
 
             return $app->redirect('/');
