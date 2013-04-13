@@ -67,8 +67,7 @@ class SilexTwitterLogin
         $apiAccessToken    = self::API_ACCESS_TOKEN;
         $that              = $this;
         $client            = $this->getClient();
-        $callback          = "http://127.0.0.1:8888/{$this->prefix}/{$this->callbackUrlRoute}";
-
+        $callback          = "http://" . $_SERVER['HTTP_HOST'] ."/{$this->prefix}/{$this->callbackUrlRoute}";
         ////
 
         $this->controllersFactory->get('/' . $this->requestTokenRoute, function () use ($app, $client, $consumerKey, $consumerSecret, $apiRequestToken, $apiAuthenticate, $callback){
