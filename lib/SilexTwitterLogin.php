@@ -28,7 +28,7 @@ class SilexTwitterLogin
     const API_VERSION                 = '1.0';
     const API_REQUEST_TOKEN           = "/oauth/request_token";
     const API_ACCESS_TOKEN            = "/oauth/access_token";
-    const API_AUTHENTICATE            = "https://api.twitter.com/oauth/authorize?";
+    const API_AUTHENTICATE            = "https://api.twitter.com/oauth/authenticate?";
     const DEFAULT_SESSION_ID          = 'twitter';
     const DEFAULT_REQUESTTOKEN        = 'requestToken';
     const DEFAULT_CALLBACKURL         = 'callbackUrl';
