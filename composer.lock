@@ -1,18 +1,18 @@
 {
-    "hash": "caf06e41b9a4369deed67d03814aefd2",
+    "hash": "59ab71b14bdc89ecc8dbfec5ebbc2bf3",
     "packages": [
         {
             "name": "guzzle/guzzle",
-            "version": "v3.4.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "v3.4.0"
+                "reference": "e64ff8e8bcad6e016ff03cf04f84870fe80030ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/v3.4.0",
-                "reference": "v3.4.0",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/e64ff8e8bcad6e016ff03cf04f84870fe80030ea",
+                "reference": "e64ff8e8bcad6e016ff03cf04f84870fe80030ea",
                 "shasum": ""
             },
             "require": {
@@ -93,7 +93,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2013-04-12 05:58:15"
+            "time": "2013-04-14 02:52:36"
         },
         {
             "name": "pimple/pimple",
@@ -501,7 +501,8 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "silex/silex": 20
+        "silex/silex": 20,
+        "guzzle/guzzle": 20
     },
     "platform": [
 

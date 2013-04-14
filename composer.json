@@ -16,7 +16,7 @@
 
     "require": {
         "silex/silex": "1.0.*@dev",
-        "guzzle/guzzle": "v3.4.0"
+        "guzzle/guzzle": "dev-master"
     },
     "autoload": {
         "psr-0": {
